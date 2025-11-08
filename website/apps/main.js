@@ -18,6 +18,7 @@ dayjs.extend(dayjs_plugin_localizedFormat);
 
 // without a trailing slash
 const xdcget_export = "https://apps.testrun.org";
+const tryItBaseUrl = "https://webxdc-try-it.xyz";
 
 /*
 Each <App> is implemented as a button that, when clicked, would show
@@ -47,6 +48,19 @@ downloading the actual webxdc file from the server.
 */
 const Dialog = ({app, modal, toggleModal}) => {
   const [subtitle, description] = [app.description.split('\n').shift(), app.description.split('\n').slice(1).join(' ')];
+
+  let tryItUrl = new URL(tryItBaseUrl);
+  tryItUrl.hostname =
+    "webapp-" +
+    app.app_id +
+    "-" +
+    app.tag_name.replaceAll(".", "-") +
+    "." +
+    tryItUrl.hostname;
+  const params = new URLSearchParams({
+    url: xdcget_export + "/" + app.cache_relname,
+  });
+  tryItUrl.hash = params.toString();
 
   // Change the title when a dialog is open
   if(modal === app.app_id) {
@@ -90,6 +104,7 @@ const Dialog = ({app, modal, toggleModal}) => {
         <a href="${xdcget_export + "/" + app.cache_relname}" target="_blank" class="button">
           Download
         </a>
+        <a class="button" target="_blank" href="${tryItUrl.toString()}">Try it</a>
         <button class="ghost" onClick=${() => toggleModal(false)}>Close</button>
       </div>
     </div>
